@@ -10,8 +10,8 @@ using namespace std;
 
 int main()
 {
-    // 打开文件读取输入
-    ifstream inputFile("1_test2.txt");
+    // 输入
+    ifstream inputFile("1_input2.txt");
     if (!inputFile.is_open())
     {
         cerr << "error" << endl;
@@ -76,6 +76,7 @@ int main()
         }
     }
 
+    // 输出
     cout << "最大价值为 " << dp[n][T] << endl;
 
     vector<int> selectedItems;

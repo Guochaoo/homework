@@ -20,10 +20,28 @@ using namespace std;
 vector<int> current;
 vector<vector<int>> solutions;
 
-void find_solution(vector<int> &items, int target, vector<int> &current, int index);
+void find_solution(vector<int> &items, int target, vector<int> &current, int index)
+{
+    if (target == 0)
+    {
+        solutions.push_back(current);
+        return;
+    }
+    if (index >= items.size() || target < 0)
+    {
+        return;
+    }
+    // no
+    find_solution(items, target, current, index + 1);
+    // yes
+    current.push_back(items[index]);
+    find_solution(items, target - items[index], current, index + 1);
+    current.pop_back();
+}
 int main()
 {
-    ifstream inputFile("1_test1.txt");
+    //输入
+    ifstream inputFile("1_input1.txt");
     if (!inputFile.is_open())
     {
         cerr << "error" << endl;
@@ -53,6 +71,8 @@ int main()
     inputFile.close();
 
     find_solution(items, T, current, 0);
+
+    //输出
     for (const auto &solution : solutions)
     {
         for (size_t i = 0; i < solution.size(); ++i)
@@ -67,22 +87,4 @@ int main()
     }
 
     return 0;
-}
-void find_solution(vector<int> &items, int target, vector<int> &current, int index)
-{
-    if (target == 0)
-    {
-        solutions.push_back(current);
-        return;
-    }
-    if (index >= items.size() || target < 0)
-    {
-        return;
-    }
-    // no
-    find_solution(items, target, current, index + 1);
-    // yes
-    current.push_back(items[index]);
-    find_solution(items, target - items[index], current, index + 1);
-    current.pop_back();
 }
