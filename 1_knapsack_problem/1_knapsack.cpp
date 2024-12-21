@@ -20,7 +20,7 @@ using namespace std;
 vector<int> current;
 vector<vector<int>> solutions;
 
-void find_solution(vector<int> &items, int target, vector<int> &current, int index)
+void solve(vector<int> &items, int target, vector<int> &current, int index)
 {
     if (target == 0)
     {
@@ -31,25 +31,23 @@ void find_solution(vector<int> &items, int target, vector<int> &current, int ind
     {
         return;
     }
-    // no
-    find_solution(items, target, current, index + 1);
-    // yes
+    //不选择
+    solve(items, target, current, index + 1);
+    //选择
     current.push_back(items[index]);
-    find_solution(items, target - items[index], current, index + 1);
+    solve(items, target - items[index], current, index + 1);
     current.pop_back();
 }
-int main()
+void read_input(int &T, vector<int> &items)
 {
-    //输入
+    //从文件输入
     ifstream inputFile("1_input1.txt");
+    //判断是否能打开文件
     if (!inputFile.is_open())
     {
-        cerr << "error" << endl;
-        return 1;
+        cerr << "打开输入文件失败" << endl;
+        return;
     }
-
-    int T;             
-    vector<int> items; 
 
     string line;
     if (getline(inputFile, line))
@@ -69,22 +67,41 @@ int main()
     }
 
     inputFile.close();
+}
+void write_output(const vector<vector<int>> &solutions)
+{
+    ofstream outputFile("1_output1.txt");
+    if (!outputFile.is_open())
+    {
+        cerr << "打开输出文件失败" << endl;
+        return;
+    }
 
-    find_solution(items, T, current, 0);
-
-    //输出
     for (const auto &solution : solutions)
     {
         for (size_t i = 0; i < solution.size(); ++i)
         {
-            cout << solution[i];
+            outputFile << solution[i];
             if (i < solution.size() - 1)
             {
-                cout << ",";
+                outputFile << ",";
             }
         }
-        cout << endl;
+        outputFile << endl;
     }
+
+    outputFile.close();
+}
+int main()
+{
+    int T;             
+    vector<int> items; 
+    //输入
+    read_input(T, items);
+    //求解
+    solve(items, T, current, 0);
+    //输出
+    write_output(solutions);
 
     return 0;
 }

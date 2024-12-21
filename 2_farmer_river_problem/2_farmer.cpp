@@ -14,10 +14,13 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-bool isSafe(int state)
+// 判断当前状态是否安全
+bool is_safe(int state)
 {
     int farmer = (state >> 3) & 1;
     int wolf = (state >> 2) & 1;
@@ -35,8 +38,8 @@ bool isSafe(int state)
     return true;
 }
 
-// 打印当前状态
-string stateToString(int state)
+// 显示当前状态
+string current_state(int state)
 {
     string south = "南岸: ", north = "北岸: ";
     if (((state >> 3) & 1) == 0)
@@ -59,19 +62,38 @@ string stateToString(int state)
     return south + "\t" + north;
 }
 
-// 广搜
+//输出
+void write_output(const vector<int> &path)
+{
+    ofstream outFile("2_output.txt");
+    if (!outFile.is_open())
+    {
+        cerr << "无法打开输入文件" << endl;
+        return;
+    }
+    outFile << "过河方案如下：" << endl;
+    for (int state : path)
+    {
+        outFile << current_state(state) << endl;
+    }
+
+    outFile.close();
+
+}
+
+// 求解问题
 void solve()
 {
     queue<int> q;
-    unordered_map<int, int> visited; // 用于记录前驱状态
+    unordered_map<int, int> visited; // 记录前驱状态
 
-    int startState = 0b0000; // 初始状态
-    int endState = 0b1111;   // 目标状态
+    int startState = 0b0000; // 初始状态0000
+    int endState = 0b1111;   // 目标状态1111
 
     q.push(startState);
-    visited[startState] = -1; // 起始状态的前驱标记为-1
+    visited[startState] = -1; // 初始化前驱状态为-1
 
-    // 广度优先搜索
+    // 广搜
     while (!q.empty())
     {
         int current = q.front();
@@ -86,13 +108,8 @@ void solve()
                 path.push_back(current);
                 current = visited[current];
             }
-
             reverse(path.begin(), path.end());
-
-            for (int state : path)
-            {
-                cout << stateToString(state) << endl;
-            }
+            write_output(path); // 写入文件
             return;
         }
 
@@ -106,7 +123,7 @@ void solve()
                 next ^= (1 << i); // 带上狼、羊或白菜
             }
 
-            if (isSafe(next) && visited.find(next) == visited.end())
+            if (is_safe(next) && visited.find(next) == visited.end())
             {
                 q.push(next);
                 visited[next] = current; // 记录前驱状态
@@ -118,8 +135,8 @@ void solve()
 }
 
 int main()
-{
-    cout << "解决方案如下\n"<< endl;
+{   
+    //求解
     solve();
     return 0;
 }

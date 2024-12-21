@@ -7,6 +7,7 @@
  */
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -22,13 +23,13 @@ vector<bool> diag2(2 * N - 1, false);
 vector<int> result(N, -1);
 
 // 检查是否可以放置
-bool canPlace(int i, int j)
+bool can_place(int i, int j)
 {
     return !col[j] && !diag1[i + j] && !diag2[i - j + N - 1];
 }
 
 // 放置皇后
-void placeQueen(int i, int j)
+void place_queen(int i, int j)
 {
     col[j] = true;
     diag1[i + j] = true;
@@ -37,7 +38,7 @@ void placeQueen(int i, int j)
 }
 
 // 移除皇后
-void removeQueen(int i, int j)
+void remove_queen(int i, int j)
 {
     col[j] = false;
     diag1[i + j] = false;
@@ -45,30 +46,55 @@ void removeQueen(int i, int j)
     result[i] = -1;
 }
 
-// 回溯函数
+// 将结果输出为图形格式
+void write_output(vector<int> &result)
+{
+    ofstream outFile("4_output.txt");
+    if (!outFile.is_open())
+    {
+        cerr << "无法打开输出文件" << endl;
+        return;
+    }
+
+    outFile << "一个合法布局：" << endl;
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            if (result[i] == j)
+            {
+                outFile << "Q "; // 皇后位置
+            }
+            else
+            {
+                outFile << ". "; // 空位
+            }
+        }
+        outFile << endl;
+    }
+    outFile << endl;
+}
+
+// 求解
 bool solve(int row)
 {
     if (row == N)
     {
         // 如果所有行都放置了皇后，输出结果
-        for (int i = 0; i < N; i++)
-        {
-            cout << result[i] + 1 << " "; // 输出皇后所在的列（从1开始）
-        }
-        cout << endl;
+        write_output(result);
         return true;
     }
 
     for (int colIdx = 0; colIdx < N; colIdx++)
     {
-        if (canPlace(row, colIdx))
+        if (can_place(row, colIdx))
         {
-            placeQueen(row, colIdx);
+            place_queen(row, colIdx);
             if (solve(row + 1))
             {
                 return true; // 找到一个合法解就返回
             }
-            removeQueen(row, colIdx); // 回溯
+            remove_queen(row, colIdx); // 回溯
         }
     }
 
@@ -77,7 +103,6 @@ bool solve(int row)
 
 int main()
 {
-    // 从第0行开始尝试
     if (!solve(0))
     {
         cout << "no solution" << endl;
