@@ -73,18 +73,18 @@ void write_output(int m, int n, vector<vector<int>>& maze, vector<pair<int, int>
 
 int main() {
     int m, n;
-    vector<vector<int>> maze(m, vector<int>(n));
-    vector<vector<bool>> visited(m, vector<bool>(n, false)); // 记录访问情况
-    vector<pair<int, int>> path;                             // 记录路径
-
-    //输入
+    // 输入
     ifstream inputFile("13_input.txt");
-    if (!inputFile) {
+    if (!inputFile)
+    {
         cerr << "无法打开输入文件！" << endl;
         return 1;
     }
 
     inputFile >> m >> n;
+    vector<vector<int>> maze(m, vector<int>(n));
+    vector<vector<bool>> visited(m, vector<bool>(n, false)); // 记录访问情况
+    vector<pair<int, int>> path;                             // 记录路径
 
     //读取障碍位置
     for (int i = 0; i < m; ++i) {
